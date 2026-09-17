@@ -15,8 +15,16 @@ std::string encryptCeaser(int c) {
     std::string returnString;
     returnString.resize(messageToEncode.size());
 
-    for (int i = 0; i < messageToEncode.size(); i += 1) {
+    int i = 0;
+    for (i = 0; i < messageToEncode.size(); i += 1) {
         char characterAt = *(messageCStr + i);
+
+        //spaces are not considered to be alphabetic letters
+        if (!std::isalpha(static_cast<char>(characterAt))) {
+            returnString[i] = characterAt;
+            continue;
+        }
+
         char encodedCharacter = static_cast<char>(startingCharacter + ((static_cast<int>(characterAt) - startingCharacter + c)%charactersInAlphabet));
         returnString[i] = encodedCharacter;
     }
@@ -27,7 +35,6 @@ std::string encryptCeaser(int c) {
 std::string decyptCeaser(std::string encrypted) {
     std::string focusWords[] = {"attack", "the", "d", "point"};
     auto encrypedCStr = encrypted.c_str();
-    size_t numLetters = encrypted.size();
 
     std::map<char, int> characterMap;
     for (const auto& string : focusWords) {
@@ -55,9 +62,11 @@ std::string decyptCeaser(std::string encrypted) {
         //Decrypt
         for (int i = 0; i < messageToEncode.size(); i += 1) {
             char characterAt = *(encrypedCStr + i);
-            //int minus = -startingCharacter + static_cast<int>(characterAt) - c;
-            //int signedMinus = (minus < 0)? charactersInAlphabet - minus : minus;
-            //char decodedCharacter = static_cast<char>(startingCharacter + signedMinus); //static_cast<char>(static_cast<int>(startingCharacter + ((static_cast<int>(characterAt) - startingCharacter - c))));
+
+            if (!std::isalpha(characterAt)) {
+                decryptString[i] = characterAt;
+                continue;
+            }
 
             int offset = (static_cast<int>(characterAt) - startingCharacter - c) % charactersInAlphabet;
             if (offset < 0) offset += charactersInAlphabet;
